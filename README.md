@@ -51,16 +51,16 @@ cmake --build . --config Release
 Для запуска серверной части используйте:
 
 ```bash
-.\src\server\Release\chat_server.exe
+.\Release\server.exe
 ```
 
 Для клиентской части:
 
 ```bash
-.\src\client\Release\chat_client.exe
+.\Release\client.exe
 ```
 
-## Структура проекта: boost-chat
+## Структура проекта: boost-current
 
 ### Верхний уровень:
 
