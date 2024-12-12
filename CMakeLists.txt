@@ -1,13 +1,18 @@
 cmake_minimum_required(VERSION 3.15)
-project(ChatApplication VERSION 1.0.0 LANGUAGES CXX)
+project(BoostUDP)
 
+# Устанавливаем стандарт C++
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(ftxui CONFIG REQUIRED)
-find_package(Boost REQUIRED COMPONENTS system)
-find_package(Threads REQUIRED)
+# Указываем путь к Boost
+include(${CMAKE_BINARY_DIR}/build/generators/conan_toolchain.cmake)
 
-add_subdirectory(src/client)
-add_subdirectory(src/server)
+# Добавляем исходники
+add_executable(server src/server.cpp)
+add_executable(client src/client.cpp)
+
+# Линкуем Boost с проектами
+find_package(Boost REQUIRED)
+target_link_libraries(server PRIVATE Boost::boost)
+target_link_libraries(client PRIVATE Boost::boost)

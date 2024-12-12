@@ -45,3 +45,36 @@ boost/bin.v2/
 Thumbs.db
 *.pyc
 __pycache__/
+
+
+# Visual Studio-specific files
+.vs/
+*.vcxproj
+*.vcxproj.user
+*.vcxproj.filters
+*.sln
+*.ipch
+*.opensdf
+*.sdf
+*.cache
+*.ilk
+*.pdb
+*.idb
+*.log
+*.tlog/
+*.lastbuildstate
+*.obj
+*.pch
+
+# Build results
+Debug/
+Release/
+x64/
+x86/
+build/
+out/
+
+# Visual Studio Code workspace
+*.code-workspace
+
+CMakeUserPresets.json
