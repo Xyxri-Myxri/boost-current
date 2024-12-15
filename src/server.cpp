@@ -8,14 +8,14 @@
 
 using boost::asio::ip::udp;
 
-// ���������������� ������� ���� ��� udp::endpoint
+// Хеш-функция для udp::endpoint для использования в unordered_map
 struct EndpointHash {
     std::size_t operator()(const udp::endpoint& endpoint) const noexcept {
         return std::hash<std::string>()(endpoint.address().to_string()) ^ std::hash<unsigned short>()(endpoint.port());
     }
 };
 
-// �������� ��������� ��� udp::endpoint
+// Функция сравнения для udp::endpoint для корректной работы unordered_map
 struct EndpointEqual {
     bool operator()(const udp::endpoint& lhs, const udp::endpoint& rhs) const noexcept {
         return lhs.address() == rhs.address() && lhs.port() == rhs.port();
@@ -29,7 +29,7 @@ public:
         std::cout << "Server started on port " << port << "\n";
         start_receive();
 
-        // ������������ ���� ���������� �����������
+        // Запуск потока очистки неактивных клиентов
         cleanup_thread_ = std::thread([this]() {
             cleanup_inactive_clients();
         });
@@ -50,35 +50,35 @@ private:
                 if (!ec && bytes_recvd > 0) {
                     std::string message(recv_buffer_.data(), bytes_recvd);
 
-                    // ���� ������� ��� � ������, ��������� ���
+                    // Если клиент новый, добавляем его в список активных клиентов
                     auto now = std::chrono::steady_clock::now();
                     if (connected_clients_.find(remote_endpoint_) == connected_clients_.end()) {
                         connected_clients_[remote_endpoint_] = now;
                         std::cout << "Client connected: " << remote_endpoint_ << "\n";
                     } else {
-                        // �������� �����������
+                        // Обновление времени последней активности клиента
                         connected_clients_[remote_endpoint_] = now;
                     }
 
-                    // ��������� ���������� ������������ �������� ���� ��������
+                    // Отправка количества подключенных клиентов всем активным клиентам
                     send_client_count();
                 }
                 
-                // ���������� ���� ���������� ���������
+                // Повторный запуск ожидания нового сообщения
                 start_receive();
             });
     }
 
     void send_client_count() {
-        // ��������� ��������� � ����������� ��������
+        // Подготовка сообщения с количеством подключенных клиентов
         std::string client_count = "Clients connected: " + std::to_string(connected_clients_.size());
 
-        // ���������� ��������� ���� ��������
+        // Асинхронная отправка сообщения всем клиентам
         for (const auto& [client, _] : connected_clients_) {
             socket_.async_send_to(
                 boost::asio::buffer(client_count), client,
                 [](boost::system::error_code /*ec*/, std::size_t /*bytes_sent*/) {
-                    // ������ �� ������ ����� ��������
+                    // Здесь можно обработать ошибки отправки, если это необходимо
                 });
         }
     }
@@ -111,7 +111,7 @@ private:
 int main() {
     try {
         boost::asio::io_context io_context;
-        Server server(io_context, 12345); // ���� �������
+        Server server(io_context, 12345); // Инициализация сервера на указанном порту
         io_context.run();
     }
     catch (std::exception& e) {
